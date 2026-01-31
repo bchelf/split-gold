@@ -18,6 +18,11 @@
       font-size: 18px;
     }
     img { image-rendering: pixelated; }
+
+    .today-split {
+      color: #ffd84d; /* brighter gold */
+      text-shadow: 0 1px 0 #000;
+    }
   </style>
   <link rel="icon" type="image/png" href="/images/favicon.png">
 </head>
@@ -25,9 +30,9 @@
 <img src="/images/split-gold-logo.png" alt="split.gold" style="max-width: 320px; margin-bottom: 0; display: block; margin-left: auto; margin-right: auto;">
 <h2 style="margin-top: 0; padding-top: 12px; padding-bottom: 12px;">Speedrun of the Day</h2>
 <p style="padding-bottom: 12px;">One Speedrun. Every Day. Under 13.37 Seconds.</p>
-  <p><a href="daily/today.html">▶ Today's Split (January 30, 2026)</a></p>
+  <p><a class="today-split" href="daily/today.html">▶ Today's Split (January 30, 2026)</a></p>
   <br>
-  <p style="margin-top: 12px;">Next split in <span id="countdown">--:--:--.--</span></p>
+  <p style="margin-top: 12px;">Next split drops in <span id="countdown">--:--:--.--</span></p>
   <script>
     (function () {
       const countdownEl = document.getElementById("countdown");

@@ -524,6 +524,7 @@ function resizeCanvas() {
 window.addEventListener("resize", () => {
   dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
   resizeCanvas();
+  draw(); // one immediate redraw
 });
 
 // initial sizing (now + after layout settles)
@@ -793,15 +794,28 @@ if (!player.grounded) {
   }
 }
 
+// --- World wrap (horizontal) ---
+const pw = Math.round(params.player_w);
 
-      // Basic fail-safe: if you fall off, respawn
-      if (player.y > worldH + 200) respawn();
+// Wrap based on sprite fully leaving the world
+if (player.x > worldW) player.x = -pw;
+else if (player.x + pw < 0) player.x = worldW;
+
+// Optional: wrap vertically too (usually you DON'T want this for platformers)
+// const ph = Math.round(params.player_h);
+// if (player.y > worldH) player.y = -ph;
+// else if (player.y + ph < 0) player.y = worldH;
+
     }
 
     // -----------------------------
     // Render
     // -----------------------------
     function draw() {
+  // Reset transform every frame (prevents cumulative translate/scale drift)
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+
       const {s, ox, oy, viewW, viewH} = getWorldTransform();
 
       // Clear

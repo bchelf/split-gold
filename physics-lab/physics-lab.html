@@ -50,7 +50,9 @@ Notes:
       overflow: hidden;
     }
 
+
     .app {
+        min-height: 0;
       display: grid;
       grid-template-columns: 1fr 420px;
       height: 100%;
@@ -89,6 +91,7 @@ Notes:
     }
 
     .right {
+        min-height: 0;
       display: flex;
       flex-direction: column;
       background: var(--panel);
@@ -505,27 +508,35 @@ Notes:
     let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
 function resizeCanvas() {
-  const cssW = canvas.clientWidth;
-  const cssH = canvas.clientHeight;
+  const r = canvas.getBoundingClientRect();
+  const cssW = r.width;
+  const cssH = r.height;
+
   canvas.width  = Math.floor(cssW * dpr);
   canvas.height = Math.floor(cssH * dpr);
 
-  // Draw in CSS pixels
+  // Draw in CSS pixel coordinates
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 
-    window.addEventListener("resize", () => {
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      resizeCanvas();
-    });
-    resizeCanvas();
-    requestAnimationFrame(() => resizeCanvas());
+
+window.addEventListener("resize", () => {
+  dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  resizeCanvas();
+});
+
+// initial sizing (now + after layout settles)
+resizeCanvas();
+requestAnimationFrame(resizeCanvas);
+setTimeout(resizeCanvas, 50);
+
 
     // The world is rendered scaled to fit the left pane
 function getWorldTransform() {
-  const viewW = canvas.clientWidth;
-  const viewH = canvas.clientHeight;
+  const r = canvas.getBoundingClientRect();
+  const viewW = r.width;
+  const viewH = r.height;
 
   const sx = viewW / worldW;
   const sy = viewH / worldH;
@@ -804,10 +815,16 @@ if (!player.grounded) {
       ctx.save();
       ctx.translate(ox, oy);
       ctx.scale(s, s);
+// sanity border around world
+ctx.strokeStyle = "#ffcc66";
+ctx.lineWidth = 2;
+ctx.strokeRect(0, 0, worldW, worldH);
 
-      ctx.strokeStyle = "#ffcc66";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(0, 0, worldW, worldH);
+// sanity crosshair at (0,0)
+ctx.beginPath();
+ctx.moveTo(0, 0); ctx.lineTo(20, 20);
+ctx.moveTo(0, 20); ctx.lineTo(20, 0);
+ctx.stroke();
 
 
       // World backdrop

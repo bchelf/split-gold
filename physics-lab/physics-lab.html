@@ -511,11 +511,21 @@ Notes:
     let panelW = 0; // canvas is only the world; panel is HTML
     let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
+    let lastViewW = 0, lastViewH = 0;
+    let lastTransform = { s: 1, ox: 0, oy: 0, viewW: 1, viewH: 1 };
+
+
 function resizeCanvas() {
   const left = document.querySelector(".left");
   const r = left.getBoundingClientRect();
   const cssW = r.width;
   const cssH = r.height;
+
+  // If invalid during active resize, don't clobber canvas to 0
+  if (cssW < 50 || cssH < 50) return;
+
+  lastViewW = cssW;
+  lastViewH = cssH;
 
   canvas.width  = Math.floor(cssW * dpr);
   canvas.height = Math.floor(cssH * dpr);
@@ -527,13 +537,16 @@ function resizeCanvas() {
 
 
 let resizePending = false;
+
 window.addEventListener("resize", () => {
   if (resizePending) return;
   resizePending = true;
+
   requestAnimationFrame(() => {
     resizePending = false;
     dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
     resizeCanvas();
+    draw(); // immediate redraw so it doesn't appear blank during drag
   });
 });
 
@@ -550,6 +563,9 @@ function getWorldTransform() {
   const viewW = r.width;
   const viewH = r.height;
 
+  // If layout is mid-resize and returns tiny/invalid dims, reuse last good transform
+  if (viewW < 50 || viewH < 50) return lastTransform;
+
   const sx = viewW / worldW;
   const sy = viewH / worldH;
   const s = Math.min(sx, sy);
@@ -557,8 +573,10 @@ function getWorldTransform() {
   const ox = (viewW - worldW * s) * 0.5;
   const oy = (viewH - worldH * s) * 0.5;
 
-  return { s, ox, oy, viewW, viewH };
+  lastTransform = { s, ox, oy, viewW, viewH };
+  return lastTransform;
 }
+
 
 
 

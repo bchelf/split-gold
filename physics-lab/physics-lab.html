@@ -830,18 +830,25 @@ function simStep(dt) {
     }
   }
 
-  // --- World wrap (horizontal), edge-crossing (prevents run-off fall) ---
-  const pw = rect.w;
+// --- World wrap (horizontal) - seam-stable (center-based) ---
+const pw = rect.w;
 
-  if (rect.x < 0) {
-    rect.x = worldW - 1;
-  } else if (rect.x + pw > worldW) {
-    rect.x = -pw + 1;
-  }
+// Wrap based on CENTER, then position body fully inside [0, worldW - pw]
+let centerX = rect.x + pw * 0.5;
 
-  // Keep player synced with rect after wrapping
-  player.x = rect.x;
-  player.y = rect.y;
+if (centerX < 0) centerX += worldW;
+else if (centerX >= worldW) centerX -= worldW;
+
+rect.x = Math.round(centerX - pw * 0.5);
+
+// Ensure fully inside world so we don't immediately re-trigger wrap/jitter
+if (rect.x < 0) rect.x = 0;
+if (rect.x > worldW - pw) rect.x = worldW - pw;
+
+// Keep player synced with rect after wrapping
+player.x = rect.x;
+player.y = rect.y;
+
 }
 
 

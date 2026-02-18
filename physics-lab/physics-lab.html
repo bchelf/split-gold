@@ -144,12 +144,12 @@ Notes:
       min-height: 16px;
     }
 
-    .sliders {
-      padding: 12px 14px 18px 14px;
-      overflow: auto;
-      height: 100%;
-    }
-
+.sliders {
+  padding: 12px 14px 18px 14px;
+  overflow: auto;
+  flex: 1;
+  min-height: 0; /* critical in flex layouts to allow scrolling */
+}
     .slider {
       padding: 10px 10px;
       border: 1px solid var(--line);
@@ -504,33 +504,39 @@ Notes:
     let panelW = 0; // canvas is only the world; panel is HTML
     let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
-    function resizeCanvas() {
-      const left = document.querySelector(".left");
-      const rect = left.getBoundingClientRect();
-      // Fill left pane
-      canvas.width = Math.floor(rect.width * dpr);
-      canvas.height = Math.floor(rect.height * dpr);
-      canvas.style.width = rect.width + "px";
-      canvas.style.height = rect.height + "px";
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
+function resizeCanvas() {
+  const cssW = canvas.clientWidth;
+  const cssH = canvas.clientHeight;
+  canvas.width  = Math.floor(cssW * dpr);
+  canvas.height = Math.floor(cssH * dpr);
+
+  // Draw in CSS pixels
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
 
     window.addEventListener("resize", () => {
       dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
       resizeCanvas();
     });
     resizeCanvas();
+    requestAnimationFrame(() => resizeCanvas());
 
     // The world is rendered scaled to fit the left pane
-    function getWorldTransform() {
-      const left = document.querySelector(".left").getBoundingClientRect();
-      const sx = left.width / worldW;
-      const sy = left.height / worldH;
-      const s = Math.min(sx, sy);
-      const ox = (left.width - worldW * s) * 0.5;
-      const oy = (left.height - worldH * s) * 0.5;
-      return {s, ox, oy, viewW:left.width, viewH:left.height};
-    }
+function getWorldTransform() {
+  const viewW = canvas.clientWidth;
+  const viewH = canvas.clientHeight;
+
+  const sx = viewW / worldW;
+  const sy = viewH / worldH;
+  const s = Math.min(sx, sy);
+
+  const ox = (viewW - worldW * s) * 0.5;
+  const oy = (viewH - worldH * s) * 0.5;
+
+  return { s, ox, oy, viewW, viewH };
+}
+
 
     function rectsIntersect(a, b) {
       return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
@@ -563,19 +569,32 @@ Notes:
     function makePlayer() {
       const {groundY} = buildWorldRects(worldW, worldH);
       return {
-        x: 80,
-        y: groundY - params.player_h,
-        vx: 0,
-        vy: 0,
-        grounded: false,
-        coyote: 0,
-        jumpBuffer: 0,
-        jumpWasDown: false,
-      };
+  x: 80,
+  y: groundY - params.player_h,
+  vx: 0,
+  vy: 0,
+  grounded: false,
+  coyote: 0,
+  jumpBuffer: 0,
+  jumpWasDown: false,
+
+  // jump/air metrics
+  wasGrounded: false,
+  airTime: 0,           // seconds since leaving ground
+  jumpStartY: 0,        // y at jump start
+  peakY: 0,             // smallest y reached during jump (top of arc)
+  lastJumpHeight: 0,    // px
+  lastAirTime: 0,       // seconds (airtime of last airborne segment)
+};
+
     }
 
     let {groundY, platforms} = buildWorldRects(worldW, worldH);
     let player = makePlayer();
+    player.wasGrounded = player.grounded;
+player.jumpStartY = player.y;
+player.peakY = player.y;
+
 
     function respawn() {
       player = makePlayer();
@@ -613,6 +632,9 @@ Notes:
     // Simulation step (mirrors pygame logic)
     // -----------------------------
     function simStep(dt) {
+        // Save previous grounded state for transition detection
+const prevGrounded = player.grounded;
+
       const move = (input.right ? 1 : 0) - (input.left ? 1 : 0);
 
       // Timers
@@ -680,6 +702,9 @@ Notes:
         player.grounded = false;
         player.coyote = 0;
         player.jumpBuffer = 0;
+          player.jumpStartY = player.y;
+  player.peakY = player.y;
+
       }
 
       // Jump cut
@@ -731,6 +756,33 @@ Notes:
       }
       player.grounded = grounded;
 
+      // --- Airtime / jump height tracking ---
+if (!player.grounded) {
+  // airborne: accumulate airtime and track peak (min y)
+  player.airTime += dt;
+  if (player.y < player.peakY) player.peakY = player.y;
+} else {
+  // grounded
+  if (!prevGrounded) {
+    // just landed: finalize last airtime + last jump height
+    player.lastAirTime = player.airTime;
+    player.airTime = 0;
+
+    // Only treat as a "jump" if we actually went up at least a bit
+    const height = Math.max(0, player.jumpStartY - player.peakY);
+    player.lastJumpHeight = height;
+
+    // reset for next jump
+    player.jumpStartY = player.y;
+    player.peakY = player.y;
+  } else {
+    // staying grounded: keep baseline aligned
+    player.jumpStartY = player.y;
+    player.peakY = player.y;
+  }
+}
+
+
       // Basic fail-safe: if you fall off, respawn
       if (player.y > worldH + 200) respawn();
     }
@@ -752,6 +804,11 @@ Notes:
       ctx.save();
       ctx.translate(ox, oy);
       ctx.scale(s, s);
+
+      ctx.strokeStyle = "#ffcc66";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(0, 0, worldW, worldH);
+
 
       // World backdrop
       ctx.fillStyle = "#10131a";
@@ -782,13 +839,18 @@ Notes:
 
       // HUD
       const hud = document.getElementById("hud");
-      if (params.show_debug >= 0.5) {
-        hud.style.display = "block";
-        hud.textContent =
-          `vx: ${player.vx.toFixed(2).padStart(8)}   vy: ${player.vy.toFixed(2).padStart(8)}\n` +
-          `grounded: ${player.grounded}   coyote: ${player.coyote.toFixed(3)}   buffer: ${player.jumpBuffer.toFixed(3)}\n` +
-          `A/D move, K run, L jump, S fast-fall | Esc pause`;
-      } else {
+     if (params.show_debug >= 0.5) {
+  hud.style.display = "block";
+hud.textContent =
+  `x:  ${player.x.toFixed(2).padStart(8)}   y:  ${player.y.toFixed(2).padStart(8)}\n` +
+  `vx: ${player.vx.toFixed(2).padStart(8)}   vy: ${player.vy.toFixed(2).padStart(8)}\n` +
+  `jump_h(last): ${player.lastJumpHeight.toFixed(1).padStart(6)} px   ` +
+  `air_t(now): ${player.airTime.toFixed(3)} s   air_t(last): ${player.lastAirTime.toFixed(3)} s\n` +
+  `grounded: ${player.grounded}   coyote: ${player.coyote.toFixed(3)}   buffer: ${player.jumpBuffer.toFixed(3)}\n` +
+  `A/D move, K run, L jump, S fast-fall | Esc pause`;
+
+}
+else {
         hud.style.display = "none";
       }
     }

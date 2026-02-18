@@ -830,24 +830,26 @@ function simStep(dt) {
     }
   }
 
-// --- World wrap (horizontal) - seam-stable (center-based) ---
+// --- World wrap (horizontal) - seam-stable torus (no clamping/walls) ---
 const pw = rect.w;
 
-// Wrap based on CENTER, then position body fully inside [0, worldW - pw]
+// Wrap when CENTER crosses boundary
 let centerX = rect.x + pw * 0.5;
 
-if (centerX < 0) centerX += worldW;
-else if (centerX >= worldW) centerX -= worldW;
+// modulo wrap into [0, worldW)
+centerX = ((centerX % worldW) + worldW) % worldW;
 
+// place rect so its center matches, allowing it to be partially outside [-pw, worldW]
 rect.x = Math.round(centerX - pw * 0.5);
 
-// Ensure fully inside world so we don't immediately re-trigger wrap/jitter
-if (rect.x < 0) rect.x = 0;
-if (rect.x > worldW - pw) rect.x = worldW - pw;
+// If you prefer immediate pop fully to the other side (no partial outside),
+// uncomment ONE of these two lines:
+// if (rect.x < 0) rect.x += worldW;
+// if (rect.x + pw > worldW) rect.x -= worldW;
 
-// Keep player synced with rect after wrapping
 player.x = rect.x;
 player.y = rect.y;
+
 
 }
 

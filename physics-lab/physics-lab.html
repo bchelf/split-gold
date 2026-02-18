@@ -50,19 +50,22 @@ Notes:
       overflow: hidden;
     }
 
-
     .app {
-        min-height: 0;
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      height: 100%;
-      width: 100%;
-    }
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  height: 100vh;            /* IMPORTANT: pin to viewport */
+  width: 100vw;             /* IMPORTANT: pin to viewport */
+  min-height: 0;
+  min-width: 0;
+}
 
     .left {
       position: relative;
       background: #0f1114;
       border-right: 2px solid var(--line);
+      overflow: hidden;
+      min-height: 0;
+     min-width: 0;
     }
 
     canvas {
@@ -92,6 +95,7 @@ Notes:
 
     .right {
         min-height: 0;
+        min-width: 0;
       display: flex;
       flex-direction: column;
       background: var(--panel);
@@ -508,23 +512,29 @@ Notes:
     let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
 function resizeCanvas() {
-  const r = canvas.getBoundingClientRect();
+  const left = document.querySelector(".left");
+  const r = left.getBoundingClientRect();
   const cssW = r.width;
   const cssH = r.height;
 
   canvas.width  = Math.floor(cssW * dpr);
   canvas.height = Math.floor(cssH * dpr);
 
-  // Draw in CSS pixel coordinates
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 
 
+
+let resizePending = false;
 window.addEventListener("resize", () => {
-  dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-  resizeCanvas();
-  draw(); // one immediate redraw
+  if (resizePending) return;
+  resizePending = true;
+  requestAnimationFrame(() => {
+    resizePending = false;
+    dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    resizeCanvas();
+  });
 });
 
 // initial sizing (now + after layout settles)
@@ -535,7 +545,8 @@ setTimeout(resizeCanvas, 50);
 
     // The world is rendered scaled to fit the left pane
 function getWorldTransform() {
-  const r = canvas.getBoundingClientRect();
+  const left = document.querySelector(".left");
+  const r = left.getBoundingClientRect();
   const viewW = r.width;
   const viewH = r.height;
 
@@ -548,6 +559,7 @@ function getWorldTransform() {
 
   return { s, ox, oy, viewW, viewH };
 }
+
 
 
     function rectsIntersect(a, b) {

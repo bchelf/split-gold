@@ -778,6 +778,21 @@ const prevGrounded = player.grounded;
       player.x = rect.x;
       player.y = rect.y;
 
+      // --- World wrap (horizontal) - use center so it triggers while grounded ---
+const pw = Math.round(params.player_w);
+const centerX = player.x + pw * 0.5;
+
+if (centerX < 0) {
+  player.x += worldW;
+} else if (centerX >= worldW) {
+  player.x -= worldW;
+}
+
+// keep rect in sync (important because ground snap uses rect)
+rect.x = Math.round(player.x);
+rect.y = Math.round(player.y);
+
+
       // Ground snap
       let grounded = false;
       const snap = params.snap_to_ground;
@@ -826,10 +841,6 @@ if (!player.grounded) {
 
 // --- World wrap (horizontal) ---
 const pw = Math.round(params.player_w);
-
-// Wrap based on sprite fully leaving the world
-if (player.x > worldW) player.x = -pw;
-else if (player.x + pw < 0) player.x = worldW;
 
 // Optional: wrap vertically too (usually you DON'T want this for platformers)
 // const ph = Math.round(params.player_h);

@@ -671,172 +671,179 @@ player.peakY = player.y;
     });
 
     // -----------------------------
-    // Simulation step (mirrors pygame logic)
-    // -----------------------------
-    function simStep(dt) {
-        // Save previous grounded state for transition detection
-const prevGrounded = player.grounded;
+// Simulation step (mirrors pygame logic)
+// -----------------------------
+function simStep(dt) {
+  // Save previous grounded state for transition detection
+  const prevGrounded = player.grounded;
 
-      const move = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+  const move = (input.right ? 1 : 0) - (input.left ? 1 : 0);
 
-      // Timers
-      if (player.grounded) player.coyote = params.coyote_time;
-      else player.coyote = Math.max(0, player.coyote - dt);
+  // Timers
+  if (player.grounded) player.coyote = params.coyote_time;
+  else player.coyote = Math.max(0, player.coyote - dt);
 
-      // Jump buffer
-      const jumpPressed = input.jump && !player.jumpWasDown;
-      const jumpReleased = !input.jump && player.jumpWasDown;
-      player.jumpWasDown = input.jump;
+  // Jump buffer
+  const jumpPressed = input.jump && !player.jumpWasDown;
+  const jumpReleased = !input.jump && player.jumpWasDown;
+  player.jumpWasDown = input.jump;
 
-      if (jumpPressed) player.jumpBuffer = params.jump_buffer;
-      else player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
+  if (jumpPressed) player.jumpBuffer = params.jump_buffer;
+  else player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
 
-      // Horizontal
-      const runMul = input.run ? params.run_multiplier : 1.0;
+  // Horizontal
+  const runMul = input.run ? params.run_multiplier : 1.0;
 
-      let maxSpeed, accel, decel, friction;
-      if (player.grounded) {
-        maxSpeed = params.ground_max_speed * runMul;
-        accel = params.ground_accel;
-        decel = params.ground_decel;
-        friction = params.ground_friction;
-      } else {
-        maxSpeed = params.air_max_speed * runMul;
-        accel = params.air_accel;
-        decel = params.air_decel;
-        friction = 0;
-      }
-
-      if (move !== 0) {
-        const desiredDir = move;
-        const turning = player.vx !== 0 && sign(player.vx) !== desiredDir;
-        const dv = (turning ? decel : accel) * dt * desiredDir;
-        player.vx += dv;
-      } else {
-        if (player.grounded) {
-          if (Math.abs(player.vx) <= friction * dt) player.vx = 0;
-          else player.vx -= sign(player.vx) * friction * dt;
-        }
-      }
-
-      // Air drag
-      if (!player.grounded && params.air_drag > 0) {
-        const drag = params.air_drag;
-        if (Math.abs(player.vx) <= drag * dt) player.vx = 0;
-        else player.vx -= sign(player.vx) * drag * dt;
-      }
-
-      player.vx = clamp(player.vx, -maxSpeed, maxSpeed);
-
-      // Gravity
-      let g = (player.vy < 0) ? params.gravity_up : params.gravity_down;
-      if (input.down && player.vy > 0) g *= params.fast_fall_multiplier;
-
-      player.vy += g * dt;
-      player.vy = clamp(player.vy, -5000, params.terminal_velocity);
-
-      // Jump execution
-      const canJump = player.grounded || (player.coyote > 0);
-      const wantsJump = player.jumpBuffer > 0;
-
-      if (wantsJump && canJump) {
-        player.vy = -params.jump_velocity;
-        player.grounded = false;
-        player.coyote = 0;
-        player.jumpBuffer = 0;
-          player.jumpStartY = player.y;
-  player.peakY = player.y;
-
-      }
-
-      // Jump cut
-      if (jumpReleased && player.vy < 0) {
-        const cutVy = -params.jump_velocity * params.jump_cut_multiplier;
-        if (player.vy < cutVy) player.vy = cutVy;
-      }
-
-      // Collision move with substeps
-      const rect = {x: Math.round(player.x), y: Math.round(player.y), w: Math.round(params.player_w), h: Math.round(params.player_h)};
-      const maxStep = Math.max(1, params.max_step_px);
-
-      const totalDx = player.vx * dt;
-      const totalDy = player.vy * dt;
-      const steps = Math.max(1, Math.ceil(Math.max(Math.abs(totalDx), Math.abs(totalDy)) / maxStep));
-      const dx = totalDx / steps;
-      const dy = totalDy / steps;
-
-      let hitGroundAny = false;
-
-      for (let i=0; i<steps; i++) {
-        const out = resolveAxisSeparated(rect, dx, dy, platforms);
-        rect.x = out.rect.x; rect.y = out.rect.y;
-        if (out.hitHead && player.vy < 0) player.vy = 0;
-        if (out.hitGround && player.vy > 0) player.vy = 0;
-        hitGroundAny = hitGroundAny || out.hitGround;
-      }
-
-      player.x = rect.x;
-      player.y = rect.y;
-
-      // Ground snap
-      let grounded = false;
-      const snap = params.snap_to_ground;
-      if (snap > 0) {
-        const test = {x: rect.x, y: rect.y + Math.round(snap), w: rect.w, h: rect.h};
-        for (const p of platforms) {
-          if (rectsIntersect(test, p)) {
-            grounded = true;
-            if (rect.y + rect.h <= p.y + Math.round(snap)) {
-              rect.y = p.y - rect.h;
-              player.y = rect.y;
-            }
-            break;
-          }
-        }
-      } else {
-        grounded = hitGroundAny;
-      }
-      player.grounded = grounded;
-
-      // --- Airtime / jump height tracking ---
-if (!player.grounded) {
-  // airborne: accumulate airtime and track peak (min y)
-  player.airTime += dt;
-  if (player.y < player.peakY) player.peakY = player.y;
-} else {
-  // grounded
-  if (!prevGrounded) {
-    // just landed: finalize last airtime + last jump height
-    player.lastAirTime = player.airTime;
-    player.airTime = 0;
-
-    // Only treat as a "jump" if we actually went up at least a bit
-    const height = Math.max(0, player.jumpStartY - player.peakY);
-    player.lastJumpHeight = height;
-
-    // reset for next jump
-    player.jumpStartY = player.y;
-    player.peakY = player.y;
+  let maxSpeed, accel, decel, friction;
+  if (player.grounded) {
+    maxSpeed = params.ground_max_speed * runMul;
+    accel = params.ground_accel;
+    decel = params.ground_decel;
+    friction = params.ground_friction;
   } else {
-    // staying grounded: keep baseline aligned
+    maxSpeed = params.air_max_speed * runMul;
+    accel = params.air_accel;
+    decel = params.air_decel;
+    friction = 0;
+  }
+
+  if (move !== 0) {
+    const desiredDir = move;
+    const turning = player.vx !== 0 && sign(player.vx) !== desiredDir;
+    const dv = (turning ? decel : accel) * dt * desiredDir;
+    player.vx += dv;
+  } else {
+    if (player.grounded) {
+      if (Math.abs(player.vx) <= friction * dt) player.vx = 0;
+      else player.vx -= sign(player.vx) * friction * dt;
+    }
+  }
+
+  // Air drag
+  if (!player.grounded && params.air_drag > 0) {
+    const drag = params.air_drag;
+    if (Math.abs(player.vx) <= drag * dt) player.vx = 0;
+    else player.vx -= sign(player.vx) * drag * dt;
+  }
+
+  player.vx = clamp(player.vx, -maxSpeed, maxSpeed);
+
+  // Gravity
+  let g = (player.vy < 0) ? params.gravity_up : params.gravity_down;
+  if (input.down && player.vy > 0) g *= params.fast_fall_multiplier;
+
+  player.vy += g * dt;
+  player.vy = clamp(player.vy, -5000, params.terminal_velocity);
+
+  // Jump execution
+  const canJump = player.grounded || (player.coyote > 0);
+  const wantsJump = player.jumpBuffer > 0;
+
+  if (wantsJump && canJump) {
+    player.vy = -params.jump_velocity;
+    player.grounded = false;
+    player.coyote = 0;
+    player.jumpBuffer = 0;
+
+    // jump metrics
     player.jumpStartY = player.y;
     player.peakY = player.y;
   }
+
+  // Jump cut
+  if (jumpReleased && player.vy < 0) {
+    const cutVy = -params.jump_velocity * params.jump_cut_multiplier;
+    if (player.vy < cutVy) player.vy = cutVy;
+  }
+
+  // Collision move with substeps
+  const rect = {
+    x: Math.round(player.x),
+    y: Math.round(player.y),
+    w: Math.round(params.player_w),
+    h: Math.round(params.player_h)
+  };
+  const maxStep = Math.max(1, params.max_step_px);
+
+  const totalDx = player.vx * dt;
+  const totalDy = player.vy * dt;
+  const steps = Math.max(1, Math.ceil(Math.max(Math.abs(totalDx), Math.abs(totalDy)) / maxStep));
+  const dx = totalDx / steps;
+  const dy = totalDy / steps;
+
+  let hitGroundAny = false;
+
+  for (let i = 0; i < steps; i++) {
+    const out = resolveAxisSeparated(rect, dx, dy, platforms);
+    rect.x = out.rect.x;
+    rect.y = out.rect.y;
+
+    if (out.hitHead && player.vy < 0) player.vy = 0;
+    if (out.hitGround && player.vy > 0) player.vy = 0;
+
+    hitGroundAny = hitGroundAny || out.hitGround;
+  }
+
+  // Update player from rect
+  player.x = rect.x;
+  player.y = rect.y;
+
+  // Ground snap
+  let grounded = false;
+  const snap = params.snap_to_ground;
+
+  if (snap > 0) {
+    const test = { x: rect.x, y: rect.y + Math.round(snap), w: rect.w, h: rect.h };
+    for (const p of platforms) {
+      if (rectsIntersect(test, p)) {
+        grounded = true;
+        if (rect.y + rect.h <= p.y + Math.round(snap)) {
+          rect.y = p.y - rect.h;
+          player.y = rect.y;
+        }
+        break;
+      }
+    }
+  } else {
+    grounded = hitGroundAny;
+  }
+
+  player.grounded = grounded;
+
+  // --- Airtime / jump height tracking ---
+  if (!player.grounded) {
+    player.airTime += dt;
+    if (player.y < player.peakY) player.peakY = player.y;
+  } else {
+    if (!prevGrounded) {
+      player.lastAirTime = player.airTime;
+      player.airTime = 0;
+
+      const height = Math.max(0, player.jumpStartY - player.peakY);
+      player.lastJumpHeight = height;
+
+      player.jumpStartY = player.y;
+      player.peakY = player.y;
+    } else {
+      player.jumpStartY = player.y;
+      player.peakY = player.y;
+    }
+  }
+
+  // --- World wrap (horizontal), edge-crossing (prevents run-off fall) ---
+  const pw = rect.w;
+
+  if (rect.x < 0) {
+    rect.x = worldW - 1;
+  } else if (rect.x + pw > worldW) {
+    rect.x = -pw + 1;
+  }
+
+  // Keep player synced with rect after wrapping
+  player.x = rect.x;
+  player.y = rect.y;
 }
 
-// --- World wrap (horizontal) ---
-const pw = Math.round(params.player_w);
-
-// Wrap based on sprite fully leaving the world
-if (player.x > worldW) player.x = -pw;
-else if (player.x + pw < 0) player.x = worldW;
-
-// Optional: wrap vertically too (usually you DON'T want this for platformers)
-// const ph = Math.round(params.player_h);
-// if (player.y > worldH) player.y = -ph;
-// else if (player.y + ph < 0) player.y = worldH;
-
-    }
 
     // -----------------------------
     // Render

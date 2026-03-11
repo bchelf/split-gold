@@ -1,0 +1,35 @@
+---
+import { business } from '../data/site';
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/landscaping/', label: 'Landscaping' },
+  { href: '/garden-center/', label: 'Garden Center' },
+  { href: '/gallery/', label: 'Gallery' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-olive-200 bg-mist/95 backdrop-blur">
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+    <a class="flex items-center gap-3" href="/" aria-label={business.name}>
+      <img src="/images/logos/good-earth-logo.jpg" alt="The Good Earth Garden Center logo" class="h-10 w-10 rounded-full object-cover" />
+      <span class="font-serif text-lg font-semibold text-olive-900">The Good Earth Garden Center</span>
+    </a>
+    <nav aria-label="Primary" class="flex flex-wrap items-center gap-2 text-sm md:gap-4 md:text-base">
+      {
+        navItems.map((item) => (
+          <a href={item.href} class={`rounded-full px-3 py-1.5 transition ${currentPath === item.href ? 'bg-olive-800 text-white' : 'text-olive-900 hover:bg-olive-100'}`}>
+            {item.label}
+          </a>
+        ))
+      }
+      <a href="/contact/" class="rounded-full bg-terracotta-600 px-4 py-2 font-semibold text-white hover:bg-terracotta-700">
+        Request a Consultation
+      </a>
+    </nav>
+  </div>
+</header>

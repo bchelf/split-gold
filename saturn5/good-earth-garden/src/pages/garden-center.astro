@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CTASection from '../components/CTASection.astro';
+import { inventoryHighlights } from '../data/site';
+
+import hero from '../assets/images/garden-center/inventory.jpg';
+import seasonal from '../assets/images/garden-center/seasonal-decor.jpg';
+---
+
+<Layout
+  title="Garden Center Inventory | The Good Earth Garden Center"
+  description="Explore trees, shrubs, perennials, houseplants, pottery, soil, mulch, and seasonal decor at The Good Earth Garden Center in Little Rock."
+  path="/garden-center/"
+>
+  <Header />
+  <main>
+    <section class="relative isolate overflow-hidden">
+      <img src={hero.src} alt="The Good Earth Garden Center inventory" class="h-[48vh] min-h-[360px] w-full object-cover" />
+      <div class="absolute inset-0 bg-olive-950/55"></div>
+      <div class="absolute inset-0 mx-auto flex max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl text-white">
+          <h1 class="font-serif text-4xl sm:text-5xl">The Good Earth Garden Center Inventory</h1>
+          <p class="mt-4 text-lg text-sand-100">A broad selection of plants, pottery, stone, soils, and seasonal products for Central Arkansas gardens and outdoor living.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div>
+          <h2 class="text-3xl text-olive-900">Organized to Make Shopping Easier</h2>
+          <p class="mt-4 text-olive-800">The Good Earth organizes inventory by sun needs and plant type, with dedicated areas for sun and shade shrubs, tree rows, groundcovers, seasonal color, and bulk materials.</p>
+          <p class="mt-4 text-olive-800">You can also explore fountains, statuary, gift items, and pottery alongside practical landscape materials and supplies.</p>
+        </div>
+        <img src={seasonal.src} alt="Seasonal decor and plant offerings" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+      </div>
+    </section>
+
+    <section class="bg-olive-50 py-16">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl text-olive-900">What You Will Find</h2>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+          {inventoryHighlights.map((item) => <li class="rounded-xl border border-olive-200 bg-white p-4 text-olive-800">{item}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <CTASection
+      title="Visit the Garden Center"
+      text="Stop by The Good Earth in Little Rock for plants, materials, and local guidance for your next project."
+      primary={{ label: 'Get Directions & Hours', href: '/contact/' }}
+      secondary={{ label: 'Explore Landscaping', href: '/landscaping/' }}
+    />
+  </main>
+  <Footer />
+</Layout>

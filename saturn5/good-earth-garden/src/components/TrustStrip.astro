@@ -1,0 +1,13 @@
+---
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="border-y border-olive-200 bg-olive-50">
+  <div class="mx-auto grid max-w-7xl gap-3 px-4 py-6 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+    {items.map((item) => <p class="text-sm font-semibold text-olive-900">{item}</p>)}
+  </div>
+</section>

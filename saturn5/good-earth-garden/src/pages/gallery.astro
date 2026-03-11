@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+import CTASection from '../components/CTASection.astro';
+
+import project1 from '../assets/images/gallery/project-landscape.jpg';
+import project2 from '../assets/images/gallery/project-lighting.jpg';
+import project3 from '../assets/images/gallery/project-outdoor-living.jpeg';
+import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
+import landscape1 from '../assets/images/landscaping/landscape-services.jpg';
+import landscape2 from '../assets/images/landscaping/ranch-ridge.jpg';
+import plants1 from '../assets/images/plants/trees.jpg';
+import center1 from '../assets/images/garden-center/aerial-garden-center.jpg';
+---
+
+<Layout
+  title="Project Gallery | The Good Earth Garden Center"
+  description="Browse landscape and garden imagery from The Good Earth Garden Center projects and garden center spaces."
+  path="/gallery/"
+>
+  <Header />
+  <main class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <h1 class="font-serif text-4xl text-olive-900 sm:text-5xl">Gallery</h1>
+    <p class="mt-4 max-w-3xl text-olive-800">Landscape and garden imagery from The Good Earth Garden Center.</p>
+    <div class="mt-10">
+      <GalleryGrid
+        items={[
+          { image: project1, alt: 'Landscape installation project' },
+          { image: project2, alt: 'Landscape lighting project' },
+          { image: project3, alt: 'Water feature and planting' },
+          { image: project4, alt: 'Aerial landscape project view' },
+          { image: landscape1, alt: 'Landscape services image' },
+          { image: landscape2, alt: 'Completed landscape project' },
+          { image: plants1, alt: 'Trees and nursery inventory' },
+          { image: center1, alt: 'Aerial view of garden center' },
+        ]}
+      />
+    </div>
+  </main>
+  <CTASection
+    title="Ready to Start Your Own Project?"
+    text="Talk with The Good Earth team about landscape planning, installation, or finding the right plants for your property."
+    primary={{ label: 'Request a Consultation', href: '/contact/' }}
+    secondary={{ label: 'Visit Garden Center', href: '/garden-center/' }}
+  />
+  <Footer />
+</Layout>

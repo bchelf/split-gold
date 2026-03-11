@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import CTASection from '../../components/CTASection.astro';
+---
+
+<Layout
+  title="Landscape Design in Little Rock, AR | The Good Earth Garden Center"
+  description="Landscape design and build services in Little Rock from The Good Earth Garden Center, focused on functional and beautiful outdoor spaces."
+  path="/services/landscape-design-little-rock/"
+>
+  <Header />
+  <main class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <h1 class="font-serif text-4xl text-olive-900 sm:text-5xl">Landscape Design in Little Rock</h1>
+    <p class="mt-4 text-olive-800">The Good Earth describes landscape as an extension of your home and emphasizes design plans tailored to each property and family.</p>
+    <p class="mt-4 text-olive-800">Their design and installation process includes understanding your goals, planning around function and aesthetics, and executing the project with experienced installation teams.</p>
+  </main>
+  <CTASection title="Start a Landscape Design Plan" text="Connect with The Good Earth to discuss design direction, budget, and installation timeline." primary={{ label: 'Request a Consultation', href: '/contact/' }} />
+  <Footer />
+</Layout>

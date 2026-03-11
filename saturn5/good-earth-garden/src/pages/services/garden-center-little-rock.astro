@@ -1,0 +1,24 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import CTASection from '../../components/CTASection.astro';
+import { inventoryHighlights } from '../../data/site';
+---
+
+<Layout
+  title="Garden Center in Little Rock, AR | The Good Earth Garden Center"
+  description="Visit The Good Earth Garden Center in Little Rock for plants, pottery, soils, seasonal color, and outdoor living materials."
+  path="/services/garden-center-little-rock/"
+>
+  <Header />
+  <main class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <h1 class="font-serif text-4xl text-olive-900 sm:text-5xl">Garden Center in Little Rock</h1>
+    <p class="mt-4 text-olive-800">The Good Earth Garden Center offers a large, organized inventory of plants and outdoor materials for local homeowners and gardeners.</p>
+    <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+      {inventoryHighlights.map((item) => <li class="rounded-xl border border-olive-200 bg-white p-4 text-olive-800">{item}</li>)}
+    </ul>
+  </main>
+  <CTASection title="Plan Your Visit" text="Visit The Good Earth Garden Center in Little Rock for inventory selection and project guidance." primary={{ label: 'Get Directions & Hours', href: '/contact/' }} />
+  <Footer />
+</Layout>

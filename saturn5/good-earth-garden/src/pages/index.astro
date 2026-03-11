@@ -8,6 +8,7 @@ import GalleryGrid from '../components/GalleryGrid.astro';
 import CTASection from '../components/CTASection.astro';
 import Footer from '../components/Footer.astro';
 import { trustSignals, aboutSummary } from '../data/site';
+import { withBase } from '../utils/paths';
 
 import heroLandscape from '../assets/images/hero/hero-landscape.jpg';
 import landscapingImage from '../assets/images/landscaping/landscape-services.jpg';
@@ -67,7 +68,7 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
           <h2 class="text-3xl text-olive-900 sm:text-4xl">Outdoor Spaces Designed for Real Life</h2>
           <p class="mt-4 text-olive-800">The Good Earth team emphasizes landscapes that are both functional and beautiful. Their process focuses on your goals, traffic flow, maintenance preferences, and long-term value.</p>
           <p class="mt-4 text-olive-800">Services include planting plans, trees and lawn integration, irrigation, landscape lighting, hardscape and outdoor rooms, water features, and maintenance support.</p>
-          <a href="/landscaping/" class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">View Landscaping Services</a>
+          <a href={withBase('/landscaping/')} class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">View Landscaping Services</a>
         </div>
         <img src={outdoorLiving.src} alt="Outdoor living landscape with stone and plantings" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
       </div>
@@ -86,7 +87,7 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
           ]}
         />
       </div>
-      <a href="/gallery/" class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">See More Images</a>
+      <a href={withBase('/gallery/')} class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">See More Images</a>
     </section>
 
     <section class="bg-olive-50 py-16">
@@ -96,7 +97,7 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
           <h2 class="text-3xl text-olive-900 sm:text-4xl">Garden Center Expertise for Every Season</h2>
           <p class="mt-4 text-olive-800">Inventory is organized by sun needs to make shopping easier, with dedicated areas for sun shrubs, shade shrubs, tree rows, groundcovers, bulk materials, and seasonal color.</p>
           <p class="mt-4 text-olive-800">You will also find pottery, fountains, gift items, and a broad selection of plants for Arkansas gardens.</p>
-          <a href="/garden-center/" class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">Plan Your Visit</a>
+          <a href={withBase('/garden-center/')} class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">Plan Your Visit</a>
         </div>
       </div>
     </section>
@@ -106,7 +107,7 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
         <div>
           <h2 class="text-3xl text-olive-900 sm:text-4xl">A Little Rock Business Since 1974</h2>
           {aboutSummary.map((line) => <p class="mt-4 text-olive-800">{line}</p>)}
-          <a href="/about/" class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">Read Our Story</a>
+          <a href={withBase('/about/')} class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">Read Our Story</a>
         </div>
         <img src={aboutImage.src} alt="Aerial view of The Good Earth Garden Center" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
       </div>

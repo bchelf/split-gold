@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { withBase } from '../utils/paths';
 
 interface Props {
   image: ImageMetadata;
@@ -19,6 +20,6 @@ const { image, imageAlt, title, description, href, cta } = Astro.props;
   <div class="space-y-4 p-6">
     <h3 class="font-serif text-2xl text-olive-900">{title}</h3>
     <p class="text-base leading-relaxed text-olive-800">{description}</p>
-    <a href={href} class="inline-flex rounded-full bg-olive-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-olive-900">{cta}</a>
+    <a href={withBase(href)} class="inline-flex rounded-full bg-olive-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-olive-900">{cta}</a>
   </div>
 </article>

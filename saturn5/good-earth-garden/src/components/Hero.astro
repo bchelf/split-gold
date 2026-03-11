@@ -1,6 +1,7 @@
 ---
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
+import { withBase } from '../utils/paths';
 
 interface Props {
   image: ImageMetadata;
@@ -24,8 +25,8 @@ const { image, imageAlt, title, subtitle, primaryCta, secondaryCta } = Astro.pro
         <h1 class="font-serif text-4xl leading-tight sm:text-5xl lg:text-6xl">{title}</h1>
         <p class="mt-5 max-w-2xl text-lg text-sand-100 sm:text-xl">{subtitle}</p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href={primaryCta.href} class="rounded-full bg-terracotta-600 px-6 py-3 text-base font-semibold text-white hover:bg-terracotta-700">{primaryCta.label}</a>
-          {secondaryCta && <a href={secondaryCta.href} class="rounded-full border border-white/70 px-6 py-3 text-base font-semibold text-white hover:bg-white/10">{secondaryCta.label}</a>}
+          <a href={withBase(primaryCta.href)} class="rounded-full bg-terracotta-600 px-6 py-3 text-base font-semibold text-white hover:bg-terracotta-700">{primaryCta.label}</a>
+          {secondaryCta && <a href={withBase(secondaryCta.href)} class="rounded-full border border-white/70 px-6 py-3 text-base font-semibold text-white hover:bg-white/10">{secondaryCta.label}</a>}
         </div>
       </div>
     </div>

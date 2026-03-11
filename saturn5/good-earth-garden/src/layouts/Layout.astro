@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { business } from '../data/site';
+import { withBase } from '../utils/paths';
 
 interface Props {
   title: string;
@@ -33,7 +34,7 @@ const localBusinessSchema = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="/images/logos/favicon.png" />
+    <link rel="icon" type="image/png" href={withBase('/images/logos/favicon.png')} />
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -41,7 +42,7 @@ const localBusinessSchema = {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content="/images/hero/hero-landscape.jpg" />
+    <meta property="og:image" content={withBase('/images/hero/hero-landscape.jpg')} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

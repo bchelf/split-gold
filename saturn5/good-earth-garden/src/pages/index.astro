@@ -9,6 +9,7 @@ import CTASection from '../components/CTASection.astro';
 import Footer from '../components/Footer.astro';
 import { trustSignals, aboutSummary } from '../data/site';
 import { withBase } from '../utils/paths';
+import { Image } from 'astro:assets';
 
 import heroLandscape from '../assets/images/hero/hero-landscape.jpg';
 import landscapingImage from '../assets/images/landscaping/landscape-services.jpg';
@@ -70,7 +71,13 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
           <p class="mt-4 text-olive-800">Services include planting plans, trees and lawn integration, irrigation, landscape lighting, hardscape and outdoor rooms, water features, and maintenance support.</p>
           <a href={withBase('/landscaping/')} class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">View Landscaping Services</a>
         </div>
-        <img src={outdoorLiving.src} alt="Outdoor living landscape with stone and plantings" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+        <Image
+          src={outdoorLiving}
+          alt="Outdoor living landscape with stone and plantings"
+          widths={[768, 1280, 1600]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft"
+        />
       </div>
     </section>
 
@@ -92,7 +99,13 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
 
     <section class="bg-olive-50 py-16">
       <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-        <img src={plantsImage.src} alt="Perennials and plants at The Good Earth" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+        <Image
+          src={plantsImage}
+          alt="Perennials and plants at The Good Earth"
+          widths={[768, 1280, 1600]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft"
+        />
         <div>
           <h2 class="text-3xl text-olive-900 sm:text-4xl">Garden Center Expertise for Every Season</h2>
           <p class="mt-4 text-olive-800">Inventory is organized by sun needs to make shopping easier, with dedicated areas for sun shrubs, shade shrubs, tree rows, groundcovers, bulk materials, and seasonal color.</p>
@@ -109,7 +122,13 @@ import project4 from '../assets/images/gallery/project-ranch-ridge.jpg';
           {aboutSummary.map((line) => <p class="mt-4 text-olive-800">{line}</p>)}
           <a href={withBase('/about/')} class="mt-6 inline-flex rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">Read Our Story</a>
         </div>
-        <img src={aboutImage.src} alt="Aerial view of The Good Earth Garden Center" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+        <Image
+          src={aboutImage}
+          alt="Aerial view of The Good Earth Garden Center"
+          widths={[768, 1280, 1600]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft"
+        />
       </div>
     </section>
 

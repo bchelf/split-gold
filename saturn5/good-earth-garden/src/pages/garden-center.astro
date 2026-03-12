@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CTASection from '../components/CTASection.astro';
 import { inventoryHighlights } from '../data/site';
+import { Image } from 'astro:assets';
 
 import hero from '../assets/images/garden-center/inventory.jpg';
 import seasonal from '../assets/images/garden-center/seasonal-decor.jpg';
@@ -17,7 +18,13 @@ import seasonal from '../assets/images/garden-center/seasonal-decor.jpg';
   <Header />
   <main>
     <section class="relative isolate overflow-hidden">
-      <img src={hero.src} alt="The Good Earth Garden Center inventory" class="h-[48vh] min-h-[360px] w-full object-cover" />
+      <Image
+        src={hero}
+        alt="The Good Earth Garden Center inventory"
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        class="h-[48vh] min-h-[360px] w-full object-cover"
+      />
       <div class="absolute inset-0 bg-olive-950/55"></div>
       <div class="absolute inset-0 mx-auto flex max-w-7xl items-center px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl text-white">
@@ -34,7 +41,13 @@ import seasonal from '../assets/images/garden-center/seasonal-decor.jpg';
           <p class="mt-4 text-olive-800">The Good Earth organizes inventory by sun needs and plant type, with dedicated areas for sun and shade shrubs, tree rows, groundcovers, seasonal color, and bulk materials.</p>
           <p class="mt-4 text-olive-800">You can also explore fountains, statuary, gift items, and pottery alongside practical landscape materials and supplies.</p>
         </div>
-        <img src={seasonal.src} alt="Seasonal decor and plant offerings" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+        <Image
+          src={seasonal}
+          alt="Seasonal decor and plant offerings"
+          widths={[768, 1280, 1600]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft"
+        />
       </div>
     </section>
 

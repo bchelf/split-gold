@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CTASection from '../components/CTASection.astro';
 import { aboutSummary, awardsHighlights } from '../data/site';
+import { Image } from 'astro:assets';
 
 import historyImage from '../assets/images/garden-center/aerial-garden-center.jpg';
 ---
@@ -21,7 +22,13 @@ import historyImage from '../assets/images/garden-center/aerial-garden-center.jp
           <h1 class="font-serif text-4xl text-olive-900 sm:text-5xl">About The Good Earth Garden Center</h1>
           {aboutSummary.map((line) => <p class="mt-4 text-olive-800">{line}</p>)}
         </div>
-        <img src={historyImage.src} alt="The Good Earth Garden Center campus" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+        <Image
+          src={historyImage}
+          alt="The Good Earth Garden Center campus"
+          widths={[768, 1280, 1600]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft"
+        />
       </div>
     </section>
 

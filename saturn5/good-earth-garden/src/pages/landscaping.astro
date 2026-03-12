@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CTASection from '../components/CTASection.astro';
 import { landscapingServices } from '../data/site';
+import { Image } from 'astro:assets';
 
 import hero from '../assets/images/hero/hero-lighting.jpg';
 import feature from '../assets/images/landscaping/ranch-ridge.jpg';
@@ -17,7 +18,13 @@ import feature from '../assets/images/landscaping/ranch-ridge.jpg';
   <Header />
   <main>
     <section class="relative isolate overflow-hidden">
-      <img src={hero.src} alt="Landscape lighting and design project" class="h-[48vh] min-h-[360px] w-full object-cover" />
+      <Image
+        src={hero}
+        alt="Landscape lighting and design project"
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        class="h-[48vh] min-h-[360px] w-full object-cover"
+      />
       <div class="absolute inset-0 bg-olive-950/55"></div>
       <div class="absolute inset-0 mx-auto flex max-w-7xl items-center px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl text-white">
@@ -34,7 +41,13 @@ import feature from '../assets/images/landscaping/ranch-ridge.jpg';
           <p class="mt-4 text-olive-800">The landscaping team highlights more than 250 combined years of experience and focuses on detailed estimates, lifestyle-fit planning, and quality workmanship.</p>
           <p class="mt-4 text-olive-800">Popular project features include hardscape and outdoor rooms, water features, sprinkler systems, and outdoor lighting.</p>
         </div>
-        <img src={feature.src} alt="Completed landscape installation with walkways and planting" class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft" loading="lazy" />
+        <Image
+          src={feature}
+          alt="Completed landscape installation with walkways and planting"
+          widths={[768, 1280, 1600]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          class="h-full min-h-80 w-full rounded-2xl object-cover shadow-soft"
+        />
       </div>
     </section>
 

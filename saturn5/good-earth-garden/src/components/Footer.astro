@@ -1,12 +1,14 @@
 ---
 import { business } from '../data/site';
+import { withBase } from '../utils/paths';
 ---
 
 <footer class="border-t border-olive-200 bg-mist py-10">
-  <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+  <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-5 lg:px-8">
     <div>
       <h3 class="font-serif text-xl text-olive-900">{business.name}</h3>
       <p class="mt-3 text-sm text-olive-800">Serving Little Rock and Central Arkansas since 1974.</p>
+      <p class="mt-2 text-sm text-olive-800">Good Earth - Great Experience is our goal.</p>
     </div>
     <div>
       <h4 class="font-semibold text-olive-900">Visit</h4>
@@ -19,6 +21,17 @@ import { business } from '../data/site';
     <div>
       <h4 class="font-semibold text-olive-900">Hours</h4>
       <p class="mt-2 text-sm text-olive-800">{business.hours.seasonal}</p>
+      <p class="mt-2 text-sm text-olive-800">{business.hours.regular}</p>
+    </div>
+    <div>
+      <h4 class="font-semibold text-olive-900">Explore</h4>
+      <ul class="mt-2 space-y-1 text-sm text-olive-800">
+        <li><a class="hover:underline" href={withBase('/landscaping/')}>Landscaping</a></li>
+        <li><a class="hover:underline" href={withBase('/garden-center/')}>Garden Center</a></li>
+        <li><a class="hover:underline" href={withBase('/learning-center/')}>Learning Center</a></li>
+        <li><a class="hover:underline" href={withBase('/about/')}>About and Awards</a></li>
+        <li><a class="hover:underline" href={withBase('/gallery/')}>Project Gallery</a></li>
+      </ul>
     </div>
   </div>
 </footer>

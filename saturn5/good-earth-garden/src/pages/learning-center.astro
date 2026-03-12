@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CTASection from '../components/CTASection.astro';
+import { business, learningCenterSections, learningCenterHelpers, learningCenterCategories } from '../data/site';
+import { withBase } from '../utils/paths';
+import { Image } from 'astro:assets';
+
+import hero from '../assets/images/plants/herbs.jpg';
+---
+
+<Layout
+  title="Learning Center | The Good Earth Garden Center"
+  description="Garden and landscaping education from The Good Earth Learning Center, including featured topics, videos, houseplants, pest control, and Arkansas gardening calendar resources."
+  path="/learning-center/"
+>
+  <Header />
+  <main>
+    <section class="relative isolate overflow-hidden">
+      <Image
+        src={hero}
+        alt="Herbs and plants at The Good Earth Garden Center"
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        class="h-[48vh] min-h-[360px] w-full object-cover"
+      />
+      <div class="absolute inset-0 bg-olive-950/55"></div>
+      <div class="absolute inset-0 mx-auto flex max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl text-white">
+          <h1 class="font-serif text-4xl sm:text-5xl">Good Earth Learning Center</h1>
+          <p class="mt-4 text-lg text-sand-100">Learn garden and landscaping tips from the pros at The Good Earth through featured posts, videos, and seasonal guidance.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <h2 class="text-3xl text-olive-900">What You Can Explore</h2>
+      <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {learningCenterSections.map((item) => <li class="rounded-xl border border-olive-200 bg-white p-4 text-olive-800">{item}</li>)}
+      </ul>
+    </section>
+
+    <section class="bg-olive-50 py-16">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div>
+          <h2 class="text-3xl text-olive-900">Landscape Helpers</h2>
+          <p class="mt-4 text-olive-800">The original Learning Center includes practical tools and planning links for planting, delivery, spacing, and seasonal timing.</p>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+            {learningCenterHelpers.map((item) => <li class="rounded-xl border border-olive-200 bg-white p-4 text-olive-800">{item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h2 class="text-3xl text-olive-900">Popular Categories</h2>
+          <p class="mt-4 text-olive-800">Topics published by The Good Earth include practical gardening, lawn, pest, and landscape design content.</p>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+            {learningCenterCategories.map((item) => <li class="rounded-xl border border-olive-200 bg-white p-4 text-olive-800">{item}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border border-olive-200 bg-white p-8 shadow-soft">
+        <h2 class="text-3xl text-olive-900">Read the Full Learning Center</h2>
+        <p class="mt-4 text-olive-800">The complete article archive, newsletter, and category pages are available on the original Good Earth Learning Center.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href={`${business.website}/learning-center/`} class="rounded-full bg-olive-800 px-5 py-2.5 font-semibold text-white hover:bg-olive-900">View Learning Center</a>
+          <a href={withBase('/contact/')} class="rounded-full border border-olive-800 px-5 py-2.5 font-semibold text-olive-900 hover:bg-olive-100">Ask a Gardening Question</a>
+        </div>
+      </div>
+    </section>
+
+    <CTASection
+      title="Need Help with a Specific Project?"
+      text="Visit The Good Earth or contact the team for plant recommendations, landscape guidance, and seasonal planning support."
+      primary={{ label: 'Contact The Good Earth', href: '/contact/' }}
+      secondary={{ label: 'Visit Garden Center', href: '/garden-center/' }}
+    />
+  </main>
+  <Footer />
+</Layout>

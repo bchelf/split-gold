@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { title, description, path = '/' } = Astro.props;
-const canonical = new URL(path, Astro.site ?? business.website).toString();
+const canonical = new URL(withBase(path), Astro.site ?? business.website).toString();
 
 const localBusinessSchema = {
   '@context': 'https://schema.org',

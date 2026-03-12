@@ -2,14 +2,11 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
-const repository = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? 'split-gold';
-const owner = process.env.GITHUB_REPOSITORY?.split('/')[0];
-
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
-  site: owner ? `https://${owner}.github.io` : undefined,
-  base: `/${repository}/`,
+  site: 'https://split.gold',
+  base: '/saturn5/good-earth-garden/',
   trailingSlash: 'always',
   vite: {
     plugins: [tailwindcss()],

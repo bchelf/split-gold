@@ -15,20 +15,20 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: saturn5/good-earth-garden
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "24"
           cache: npm
           cache-dependency-path: saturn5/good-earth-garden/package-lock.json
 
@@ -36,18 +36,31 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
+        working-directory: saturn5/good-earth-garden
         run: npm ci
 
       - name: Build with Astro
+        working-directory: saturn5/good-earth-garden
         run: npm run build
 
-      - name: Disable Jekyll processing
-        run: touch dist/.nojekyll
+      - name: Stage full static site
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          rsync -a \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude "saturn5/" \
+            --exclude "_site/" \
+            ./ _site/
+          mkdir -p _site/saturn5/good-earth-garden
+          rsync -a saturn5/good-earth-garden/dist/ _site/saturn5/good-earth-garden/
+          touch _site/.nojekyll
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: saturn5/good-earth-garden/dist
+          path: _site
 
   deploy:
     needs: build
